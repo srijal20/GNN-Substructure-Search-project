@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CS 6012 - Checkpoint #2 Status Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 20mm 18mm 20mm;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 15pt;
+      margin: 0 0 4px 0;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 12pt;
+      margin: 0 0 6px 0;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+    .meta {
+      font-size: 9.5pt;
+      color: #4b5563;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .section-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 10px;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-left: 3px solid #2563eb;
+      padding-left: 6px;
+    }
+    p {
+      margin: 0 0 6px 0;
+      text-align: justify;
+    }
+    ul {
+      margin: 0 0 6px 0;
+      padding-left: 18px;
+    }
+    li {
+      margin-bottom: 3px;
+    }
+    .badge {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 9.5pt;
+    }
+    a {
+      color: #2563eb;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .grid {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin: 6px 0;
+    }
+    code {
+      font-family: Consolas, monospace;
+      font-size: 9.5pt;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>CS 6012: Autumn 2026 — Open Project</h1>
+    <h2>Intermediate Checkpoint #2: Status Report (Submission 2: Code-Based Project)</h2>
+    <div class="meta">
+      <span><strong>Team:</strong> Aayush Gupta (25m0140) &amp; Srijal Gupta (25m0387)</span>
+      <span><strong>Date:</strong> October 19, 2026</span>
+    </div>
+  </div>
+
+  <div class="section-title">1. Title of the Project</div>
+  <p><strong>GNN Molecular Substructure Search: Accuracy vs. Speed Trade-offs Against Classical Fingerprint Screening</strong></p>
+
+  <div class="section-title">2. Problem Statement</div>
+  <p>
+    Exact molecular substructure search using combinatorial graph matching (RDKit’s Ullmann/VF2-based <code>HasSubstructMatch</code>) provides reliable ground truth but scales poorly across large chemical libraries. We train Graph Neural Networks (GNNs) to act as an ultrafast approximate filter predicting whether a chemical query fragment <em>Q</em> occurs inside target molecule <em>T</em>. Our goal is to explore the speed-accuracy Pareto frontier when combining a learned GNN candidate shortlist with exact verification, benchmarked directly against industrial cheminformatics standards (<code>Chem.PatternFingerprint</code>).
+  </p>
+
+  <div class="section-title">3. Extensions to Prior Work &nbsp;<span class="badge">In-Progress</span></div>
+  <ul>
+    <li><strong>NeuroMatch-Style Order Embeddings:</strong> Formulated substructure containment as a partial order in a learned non-negative embedding space (<em>z<sub>Q</sub> &le; z<sub>T</sub></em> element-wise) optimized via max-margin violation loss (<em>E(Q, T) = ||max(0, z<sub>Q</sub> &minus; z<sub>T</sub>)||<sup>2</sup></em>). This enables precomputing database embeddings once for instant matrix screening.</li>
+    <li><strong>Bond-Aware Molecular Graph Encoding:</strong> Replaced generic graphs with chemistry-aware <code>GINEConv</code> layers featuring 10-dimensional one-hot atom vectors and 4-dimensional bond type vectors matching query SMARTS semantics.</li>
+    <li><strong>Two-Stage Cascaded Screening:</strong> Implemented a cascade where the GNN shortlists candidates at a calibrated 98% recall threshold, followed by RDKit exact verification on only the shortlist.</li>
+  </ul>
+
+  <div class="section-title">4. How Do We Feel? &nbsp;<span class="badge">In-the-zone</span></div>
+  <p>
+    We have implemented the entire end-to-end pipeline in PyTorch Geometric and RDKit, verified zero syntax/runtime issues, and completed an empirical pilot benchmark on a 5,000-molecule database.
+  </p>
+
+  <div class="section-title">5. Contributions of Members</div>
+  <div class="grid">
+    <ul>
+      <li><strong>Aayush Gupta (25m0140):</strong> PyG graph featurization (atom/bond features), GINEConv Siamese encoder, Model A (BCE) and Model B (NeuroMatch order embedding) loss implementations, decision threshold optimization, and Colab integration.</li>
+      <li><strong>Srijal Gupta (25m0387):</strong> ZINC250k data loading and partitioning, subgraph query generation (4–12 atoms + 20 functional groups), RDKit ground-truth labeling, Pattern Fingerprint screening baseline, and benchmark timing harness.</li>
+      <li><strong>Joint Deliverables:</strong> Cascaded search formulation, pilot error analysis by query size, report documentation, and upcoming presentation recording.</li>
+    </ul>
+  </div>
+
+  <div class="section-title">6. Repository &amp; Updated Schedule</div>
+  <ul>
+    <li><strong>GitHub Repository:</strong> <a href="https://github.com/srijal20/GNN-Substructure-Search-project">https://github.com/srijal20/GNN-Substructure-Search-project</a><br>
+    <em>(Includes complete runnable pipeline, Colab notebook with 1-click badge, pilot CSV results, and tradeoff plots)</em></li>
+    <li><strong>Schedule Spreadsheet:</strong> <a href="https://docs.google.com/spreadsheets/d/1264hAmtv7T5bGPyuDbSqR52UGxm6RZCEa7NFxWk-cQ4/edit?usp=sharing">https://docs.google.com/spreadsheets/d/1264hAmtv7T5bGPyuDbSqR52UGxm6RZCEa7NFxWk-cQ4/edit?usp=sharing</a></li>
+  </ul>
+
+</body>
+</html>
