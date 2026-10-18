@@ -1,0 +1,5 @@
+*.csv.gz
+zinc250k.csv
+*.pt
+__pycache__/
+.ipynb_checkpoints/
