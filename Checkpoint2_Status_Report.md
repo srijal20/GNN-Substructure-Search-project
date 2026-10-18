@@ -20,7 +20,7 @@ Exact molecular substructure search using combinatorial graph matching (e.g., RD
 3. **Two-Stage Cascaded Screening:** Developed a cascaded retrieval architecture where the order-embedding model shortlists candidates at a calibrated $98\%$ recall threshold, followed by RDKit verification on only the shortlist.
 
 ### 4. How Do We Feel?
-**In-the-zone.** We have implemented the complete end-to-end pipeline in PyTorch Geometric and RDKit, and completed a pilot validation benchmark on a 5,000-molecule database.
+**Depressed.** We have implemented the complete end-to-end pipeline in PyTorch Geometric and RDKit, and completed a pilot validation benchmark on a 5,000-molecule database.
 
 ### 5. Contributions of Members
 - **Aayush Gupta (25m0140):** Implemented PyG graph featurization (atom and bond one-hot encoding), GINEConv Siamese encoder, Model A (BCE) and Model B (NeuroMatch order embedding) loss implementations, decision threshold optimization, and Colab integration.
