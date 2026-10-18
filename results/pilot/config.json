@@ -1,0 +1,25 @@
+{
+  "N_TRAIN_MOLS": 10000,
+  "N_VAL_MOLS": 1000,
+  "N_DB": 5000,
+  "N_QSRC": 200,
+  "N_TRAIN_QUERIES": 10000,
+  "N_VAL_QUERIES": 500,
+  "N_TEST_QUERIES": 100,
+  "EPOCHS": 12,
+  "BATCH": 256,
+  "QUERY_MIN_ATOMS": 4,
+  "QUERY_MAX_ATOMS": 12,
+  "HIDDEN": 64,
+  "EMB_DIM": 64,
+  "N_LAYERS": 4,
+  "LR": 0.001,
+  "MARGIN": 1.0,
+  "FP_BITS": 2048,
+  "device": "cpu",
+  "db_fp_seconds": 1.361979546000157,
+  "db_embed_seconds": {
+    "A": 0.647024655000223,
+    "B": 0.6684422240000458
+  }
+}

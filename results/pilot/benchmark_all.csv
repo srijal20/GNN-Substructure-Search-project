@@ -1,0 +1,7 @@
+method,precision,recall,f1,ms_per_query,avg_returned,speedup_vs_brute
+"RDKit exact, brute force",1.0,1.0,1.0,31.84,494.2,1.0
+Pattern FP screen only,0.7026,1.0,0.8254,1.09,703.3,29.2
+Pattern FP screen + RDKit,1.0,1.0,1.0,5.61,494.2,5.7
+GNN A: GIN + MLP,0.4613,0.6377,0.5353,6.66,683.2,4.8
+GNN B: order embedding,0.2695,0.7709,0.3993,2.79,1413.9,11.4
+Cascade: GNN B shortlist + RDKit,1.0,0.9824,0.9911,20.21,485.5,1.6
