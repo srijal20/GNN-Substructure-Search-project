@@ -28,6 +28,8 @@ for pkg, mod in [("rdkit", "rdkit"), ("torch_geometric", "torch_geometric")]:
 import os, time, random, math, json
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
@@ -37,8 +39,13 @@ from torch_geometric.nn import GINEConv, global_add_pool
 from rdkit import Chem, RDLogger, DataStructs
 RDLogger.DisableLog("rdApp.*")
 
+if torch.cuda.is_available():
+    torch.backends.cudnn.benchmark = True
+
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", DEVICE, "| torch", torch.__version__)
+if DEVICE.type == "cuda":
+    print("GPU:", torch.cuda.get_device_name(0), f"({torch.cuda.get_device_properties(0).total_memory // (1024**2)} MB VRAM)")
 
 # %% [markdown]
 # ## 1. Configuration
