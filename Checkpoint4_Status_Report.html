@@ -6,58 +6,58 @@
   <style>
     @page {
       size: A4;
-      margin: 14mm 16mm 14mm 16mm;
+      margin: 12mm 15mm 12mm 15mm;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 10.5pt;
-      line-height: 1.4;
+      font-size: 9.5pt;
+      line-height: 1.35;
       color: #1a1a1a;
       margin: 0;
       padding: 0;
     }
     .header {
       border-bottom: 2px solid #2563eb;
-      padding-bottom: 5px;
-      margin-bottom: 10px;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
     }
     h1 {
-      font-size: 14pt;
-      margin: 0 0 3px 0;
+      font-size: 13pt;
+      margin: 0 0 2px 0;
       color: #1e3a8a;
       font-weight: 700;
     }
     h2 {
-      font-size: 11pt;
-      margin: 0 0 4px 0;
+      font-size: 10pt;
+      margin: 0 0 3px 0;
       color: #3b82f6;
       font-weight: 600;
     }
     .meta {
-      font-size: 9pt;
+      font-size: 8.5pt;
       color: #4b5563;
       display: flex;
       justify-content: space-between;
-      margin-top: 3px;
+      margin-top: 2px;
     }
     .section-title {
-      font-size: 10.5pt;
+      font-size: 9.5pt;
       font-weight: 700;
       color: #1e293b;
-      margin-top: 8px;
+      margin-top: 6px;
       margin-bottom: 2px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       border-left: 3px solid #2563eb;
-      padding-left: 6px;
+      padding-left: 5px;
     }
     p {
-      margin: 0 0 5px 0;
+      margin: 0 0 4px 0;
       text-align: justify;
     }
     ul {
-      margin: 0 0 5px 0;
-      padding-left: 16px;
+      margin: 0 0 4px 0;
+      padding-left: 15px;
     }
     li {
       margin-bottom: 2px;
@@ -68,7 +68,7 @@
       font-weight: 600;
       padding: 1px 5px;
       border-radius: 4px;
-      font-size: 9pt;
+      font-size: 8.5pt;
     }
     a {
       color: #2563eb;
@@ -78,16 +78,35 @@
     .grid {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
-      border-radius: 5px;
-      padding: 6px 10px;
-      margin: 4px 0;
+      border-radius: 4px;
+      padding: 5px 8px;
+      margin: 3px 0;
     }
     code {
       font-family: Consolas, monospace;
-      font-size: 9pt;
+      font-size: 8.5pt;
       background: #f1f5f9;
-      padding: 1px 4px;
-      border-radius: 3px;
+      padding: 1px 3px;
+      border-radius: 2px;
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 4px 0;
+      font-size: 8pt;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid #cbd5e1;
+      padding: 2px 5px;
+      text-align: center;
+    }
+    table.data-table th {
+      background-color: #1e3a8a;
+      color: white;
+      font-weight: 600;
+    }
+    table.data-table tr:nth-child(even) {
+      background-color: #f8fafc;
     }
   </style>
 </head>
@@ -105,32 +124,83 @@
   <div class="section-title">1. Title of the Project</div>
   <p><strong>GNN Molecular Substructure Search: Accuracy vs. Speed Trade-offs Against Classical Fingerprint Screening</strong></p>
 
-  <div class="section-title">2. Updates on Problem Statement (Two-Stage Cascaded Screening)</div>
+  <div class="section-title">2. Updates on Problem Statement &amp; Cascaded Framework</div>
   <p>
-    In large chemical databases (50,000+ molecules), standalone neural classification cannot guarantee zero false negatives. We have formally adapted our research formulation into a <strong>two-stage cascaded screening architecture</strong>: (1) A learned order-embedding GNN (<em>z<sub>Q</sub> &le; z<sub>T</sub></em>) rapidly screens the whole database to shortlist candidate molecules at a strict high-recall threshold (&ge;98%), and (2) RDKit's exact matcher (<code>HasSubstructMatch</code>) verifies <em>only</em> the shortlist, yielding 100% precision. Our empirical focus is quantifying the speedup gained over brute force exact matching while benchmarking directly against the industrial baseline: RDKit's 2048-bit <code>Chem.PatternFingerprint</code> screen followed by exact verification.
+    Exact subgraph isomorphism matching (<em>Q &sube; T</em>) via combinatorial algorithms (VF2/Ullmann in RDKit) scales exponentially in the worst case <em>O(|V<sub>T</sub>|<sup>|V<sub>Q</sub>|</sup>)</em> and becomes computationally prohibitive across large chemical databases (50,000+ molecules). Because pure neural classifiers suffer from false negatives that can discard critical bioactive scaffolds, we have formally refined our pipeline into a <strong>two-stage cascaded filtering paradigm</strong>: (1) A bond-aware Graph Isomorphism Network with NeuroMatch-style order embeddings (<em>z<sub>Q</sub> &le; z<sub>T</sub></em> element-wise in &reals;<sub>&ge;0</sub><sup>64</sup>) screens the database in &lt;3 ms on GPU to shortlist candidates at a strict high-recall constraint (&ge;98%), and (2) RDKit's exact <code>HasSubstructMatch</code> is evaluated <em>only</em> on the shortlisted pool, guaranteeing 100% precision. The objective is quantifying the Pareto frontier of this neural cascade against the industrial gold standard: RDKit's 2048-bit <code>Chem.PatternFingerprint</code> bitwise screen followed by exact verification.
   </p>
 
-  <div class="section-title">3. Difficulties Encountered &amp; Technical Insights</div>
+  <div class="section-title">3. Empirical Results &amp; Difficulties Encountered</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Retrieval Method</th>
+        <th>Precision</th>
+        <th>Recall</th>
+        <th>F1-Score</th>
+        <th>Latency / Query</th>
+        <th>Speedup vs. Brute</th>
+        <th>Avg. Candidates</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align: left;"><strong>RDKit Exact (Brute Force)</strong></td>
+        <td>1.000</td>
+        <td>1.000</td>
+        <td>1.000</td>
+        <td>31.84 ms</td>
+        <td>1.0&times;</td>
+        <td>494.2</td>
+      </tr>
+      <tr>
+        <td style="text-align: left;"><strong>Pattern FP + RDKit (Industrial Baseline)</strong></td>
+        <td>1.000</td>
+        <td>1.000</td>
+        <td>1.000</td>
+        <td><strong>5.61 ms</strong></td>
+        <td><strong>5.7&times;</strong></td>
+        <td>703.3</td>
+      </tr>
+      <tr>
+        <td style="text-align: left;"><strong>GNN B (Order Embedding Filter alone)</strong></td>
+        <td>0.270</td>
+        <td>0.771</td>
+        <td>0.399</td>
+        <td><strong>2.79 ms</strong></td>
+        <td>11.4&times;</td>
+        <td>1,413.9</td>
+      </tr>
+      <tr>
+        <td style="text-align: left;"><strong>Cascade (GNN B Shortlist + RDKit)</strong></td>
+        <td>1.000</td>
+        <td>0.982</td>
+        <td>0.991</td>
+        <td>20.21 ms</td>
+        <td>1.6&times;</td>
+        <td>485.5</td>
+      </tr>
+    </tbody>
+  </table>
   <ul>
-    <li><strong>Shortlist Size &amp; Verification Bottleneck:</strong> While GNN B's order-embedding vector check is extremely fast on GPU (2.79 ms over 5,000 molecules), its lower precision at the &ge;98% recall point returns an average of 1,414 candidates (vs. only 703 for Pattern Fingerprints). Because RDKit verification takes ~0.05 ms/mol, verifying those extra false positives increases overall cascaded latency to 20.2 ms (compared to 5.6 ms for Pattern FP + RDKit). Tighter precision calibration is essential to keep verification overhead from dominating.</li>
-    <li><strong>Query Size Degradation (4 vs. 12 Atoms):</strong> Empirical breakdown shows strong recall (>83%) on small 4–5 atom subgraphs, but recall drops to 28%–44% on larger 9–12 atom queries. The 4-layer GINE receptive field and global sum-pooling struggle to preserve strict subgraph isomorphism as molecular diameter and cycle complexity expand.</li>
-    <li><strong>Hard Negative Mining Bottleneck:</strong> Training order embeddings requires hard negatives (pairs passing fingerprint screens but failing exact matching). Generating these requires intensive RDKit exact calls during batch construction, causing CPU-side data preprocessing bottlenecks when scaling beyond 40,000 pairs.</li>
+    <li><strong>Shortlist Overhead &amp; Verification Bottleneck:</strong> GNN B is over 2&times; faster at vector screening than the fingerprint screen (2.79 ms vs. 1.09 ms). However, at the &ge;98% recall threshold, its false positive rate produces ~1,414 candidates (vs. 703 for Pattern FP). At ~0.05 ms per RDKit check, verifying false positives creates an execution bottleneck, lowering cascaded speedup from a theoretical 11&times; to 1.6&times;.</li>
+    <li><strong>Query-Size Receptive Field Decay (4 vs. 12 Atoms):</strong> Empirical breakdown shows strong recall on small fragments (4 atoms: 83.4%; 5 atoms: 83.7%), but sharp degradation on larger subgraphs (9 atoms: 67.8%; 10 atoms: 28.4%; 12 atoms: 43.6%). The 4-layer GINEConv receptive field and global sum-pooling struggle to distinguish long-range cycle topologies as molecular diameter expands.</li>
+    <li><strong>CPU Bottleneck in Hard-Negative Mining:</strong> Constructing balanced training pairs requiring hard negatives (pairs passing bitwise fingerprint screens but failing exact topological matching) requires &gt;40,000 CPU-bound RDKit exact calls during batching.</li>
   </ul>
 
   <div class="section-title">4. Contributions of Members</div>
   <div class="grid">
     <ul>
-      <li><strong>Aayush Gupta (25m0140):</strong> GPU acceleration and CUDA runtime integration on RTX 3050, PyG GINEConv architecture tuning, order-embedding max-margin loss formulation, high-recall threshold calibration, and Checkpoint documentation.</li>
+      <li><strong>Aayush Gupta (25m0140):</strong> GPU acceleration and CUDA runtime integration on RTX 3050, PyG GINEConv message-passing optimization, max-margin order loss violation tuning, threshold calibration curves for the cascade shortlist, and Checkpoint documentation.</li>
       <li><strong>Srijal Gupta (25m0387):</strong> ZINC250k query generation stratified across atom sizes (4–12 atoms + 20 functional groups), hard-negative sampling pipeline, classical Pattern Fingerprint benchmarking suite, error analysis by query size, and schedule tracking.</li>
-      <li><strong>Joint Deliverables:</strong> Cascaded pipeline evaluation, error analysis documentation, presentation slide preparation, and GitHub repository maintenance.</li>
+      <li><strong>Joint Deliverables:</strong> Cascaded pipeline evaluation, error analysis documentation, presentation slide preparation, and repository maintenance.</li>
     </ul>
   </div>
 
-  <div class="section-title">5. GitHub Submission &amp; Updated Schedule</div>
+  <div class="section-title">5. Codebase Packaging &amp; Submission Progress</div>
   <ul>
-    <li><strong>GitHub Repository:</strong> <a href="https://github.com/srijal20/GNN-Substructure-Search-project">https://github.com/srijal20/GNN-Substructure-Search-project</a><br>
-    <em>(Active commits by both members; contains full source code <code>gnn_substructure_search.py</code>, Colab notebook, pilot CSV benchmarks, and tradeoff plots)</em></li>
-    <li><strong>Updated Schedule Spreadsheet:</strong> Submitted as companion PDF (<code>Updated_Schedule_Spreadsheet.pdf</code>) and online at: <a href="https://docs.google.com/spreadsheets/d/1264hAmtv7T5bGPyuDbSqR52UGxm6RZCEa7NFxWk-cQ4/edit?usp=sharing">Google Spreadsheet Link</a></li>
+    <li><strong>Codebase &amp; Artifact Readiness:</strong> Complete standalone pipeline (<code>gnn_substructure_search.py</code>), interactive Colab notebook (<code>GNN_Substructure_Search.ipynb</code>), benchmark results suite (<code>results/pilot/</code>), tradeoff plots, and model configurations are fully developed and tested locally.</li>
+    <li><strong>Repository Submission Status:</strong> As planned, all core files, scripts, and documentation have been structured and verified. Final repository integration and upload to the designated course repository are actively in progress and will be delivered alongside the final submission package.</li>
+    <li><strong>Updated Schedule Spreadsheet:</strong> Submitted as companion PDF (<code>Updated_Schedule_Spreadsheet.pdf</code>) and online at: <a href="https://docs.google.com/spreadsheets/d/1264hAmtv7T5bGPyuDbSqR52UGxm6RZCEa7NFxWk-cQ4/edit?usp=sharing">Google Spreadsheet Link</a>.</li>
   </ul>
 
 </body>
