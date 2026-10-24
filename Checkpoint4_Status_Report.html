@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CS 6012 - Checkpoint #4 Status Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm 14mm 16mm;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.4;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 14pt;
+      margin: 0 0 3px 0;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 11pt;
+      margin: 0 0 4px 0;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+    .meta {
+      font-size: 9pt;
+      color: #4b5563;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+    }
+    .section-title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 8px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-left: 3px solid #2563eb;
+      padding-left: 6px;
+    }
+    p {
+      margin: 0 0 5px 0;
+      text-align: justify;
+    }
+    ul {
+      margin: 0 0 5px 0;
+      padding-left: 16px;
+    }
+    li {
+      margin-bottom: 2px;
+    }
+    .badge {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 9pt;
+    }
+    a {
+      color: #2563eb;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .grid {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      padding: 6px 10px;
+      margin: 4px 0;
+    }
+    code {
+      font-family: Consolas, monospace;
+      font-size: 9pt;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>CS 6012: Autumn 2026 — Open Project</h1>
+    <h2>Intermediate Checkpoint #4: Status Report (Submission 2: Code-Based Project)</h2>
+    <div class="meta">
+      <span><strong>Team:</strong> Aayush Gupta (25m0140) &amp; Srijal Gupta (25m0387)</span>
+      <span><strong>Date:</strong> October 24, 2026</span>
+    </div>
+  </div>
+
+  <div class="section-title">1. Title of the Project</div>
+  <p><strong>GNN Molecular Substructure Search: Accuracy vs. Speed Trade-offs Against Classical Fingerprint Screening</strong></p>
+
+  <div class="section-title">2. Updates on Problem Statement (Two-Stage Cascaded Screening)</div>
+  <p>
+    In large chemical databases (50,000+ molecules), standalone neural classification cannot guarantee zero false negatives. We have formally adapted our research formulation into a <strong>two-stage cascaded screening architecture</strong>: (1) A learned order-embedding GNN (<em>z<sub>Q</sub> &le; z<sub>T</sub></em>) rapidly screens the whole database to shortlist candidate molecules at a strict high-recall threshold (&ge;98%), and (2) RDKit's exact matcher (<code>HasSubstructMatch</code>) verifies <em>only</em> the shortlist, yielding 100% precision. Our empirical focus is quantifying the speedup gained over brute force exact matching while benchmarking directly against the industrial baseline: RDKit's 2048-bit <code>Chem.PatternFingerprint</code> screen followed by exact verification.
+  </p>
+
+  <div class="section-title">3. Difficulties Encountered &amp; Technical Insights</div>
+  <ul>
+    <li><strong>Shortlist Size &amp; Verification Bottleneck:</strong> While GNN B's order-embedding vector check is extremely fast on GPU (2.79 ms over 5,000 molecules), its lower precision at the &ge;98% recall point returns an average of 1,414 candidates (vs. only 703 for Pattern Fingerprints). Because RDKit verification takes ~0.05 ms/mol, verifying those extra false positives increases overall cascaded latency to 20.2 ms (compared to 5.6 ms for Pattern FP + RDKit). Tighter precision calibration is essential to keep verification overhead from dominating.</li>
+    <li><strong>Query Size Degradation (4 vs. 12 Atoms):</strong> Empirical breakdown shows strong recall (>83%) on small 4–5 atom subgraphs, but recall drops to 28%–44% on larger 9–12 atom queries. The 4-layer GINE receptive field and global sum-pooling struggle to preserve strict subgraph isomorphism as molecular diameter and cycle complexity expand.</li>
+    <li><strong>Hard Negative Mining Bottleneck:</strong> Training order embeddings requires hard negatives (pairs passing fingerprint screens but failing exact matching). Generating these requires intensive RDKit exact calls during batch construction, causing CPU-side data preprocessing bottlenecks when scaling beyond 40,000 pairs.</li>
+  </ul>
+
+  <div class="section-title">4. Contributions of Members</div>
+  <div class="grid">
+    <ul>
+      <li><strong>Aayush Gupta (25m0140):</strong> GPU acceleration and CUDA runtime integration on RTX 3050, PyG GINEConv architecture tuning, order-embedding max-margin loss formulation, high-recall threshold calibration, and Checkpoint documentation.</li>
+      <li><strong>Srijal Gupta (25m0387):</strong> ZINC250k query generation stratified across atom sizes (4–12 atoms + 20 functional groups), hard-negative sampling pipeline, classical Pattern Fingerprint benchmarking suite, error analysis by query size, and schedule tracking.</li>
+      <li><strong>Joint Deliverables:</strong> Cascaded pipeline evaluation, error analysis documentation, presentation slide preparation, and GitHub repository maintenance.</li>
+    </ul>
+  </div>
+
+  <div class="section-title">5. GitHub Submission &amp; Updated Schedule</div>
+  <ul>
+    <li><strong>GitHub Repository:</strong> <a href="https://github.com/srijal20/GNN-Substructure-Search-project">https://github.com/srijal20/GNN-Substructure-Search-project</a><br>
+    <em>(Active commits by both members; contains full source code <code>gnn_substructure_search.py</code>, Colab notebook, pilot CSV benchmarks, and tradeoff plots)</em></li>
+    <li><strong>Updated Schedule Spreadsheet:</strong> Submitted as companion PDF (<code>Updated_Schedule_Spreadsheet.pdf</code>) and online at: <a href="https://docs.google.com/spreadsheets/d/1264hAmtv7T5bGPyuDbSqR52UGxm6RZCEa7NFxWk-cQ4/edit?usp=sharing">Google Spreadsheet Link</a></li>
+  </ul>
+
+</body>
+</html>
