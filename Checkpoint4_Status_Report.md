@@ -1,7 +1,7 @@
 # CS 6012 — Autumn 2026: Open Project
 ## Intermediate Checkpoint #4: Status Report for Submission 2 (Code-Based Project)
 
-**Date:** October 24, 2026  
+**Date:** October 25, 2026  
 **Team Members:**  
 - Aayush Gupta (Roll No: 25m0140)  
 - Srijal Gupta (Roll No: 25m0387)  
