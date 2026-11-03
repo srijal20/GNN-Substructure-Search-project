@@ -1,0 +1,30 @@
+================================================================================
+CS 6012: Deep Learning — Autumn 2026 (IIT Bombay)
+Results Presentation Video Details & Links
+================================================================================
+
+PROJECT:
+GNN Molecular Substructure Search: Accuracy vs. Speed Trade-offs Against Classical Fingerprint Screening
+
+PRESENTERS:
+- Srijal Gupta (Roll No: 25m0387)
+- Aayush Gupta (Roll No: 25m0140)
+
+DURATION:
+Approximately 2 minutes (~240 words, strictly within the 2 to 3 minute limit).
+
+WALKTHROUGH SCRIPT:
+See 'Results_Video_Walkthrough_Script.md' for the complete, minute-by-minute speaking 
+script with exact screen visual cues.
+
+VIDEO SUBMISSION LINKS:
+1. Moodle Submission: Uploaded directly to the CS 6012 Moodle assignment portal.
+2. Google Drive Backup / Unlisted Stream Link:
+   [PASTE_VIDEO_DRIVE_OR_STREAM_LINK_HERE]
+
+SCREEN RECORDING CONTENT SHOWN IN VIDEO:
+- 0:00 - 0:30 (Srijal): Problem Formulation, Subgraph Isomorphism & Two-Stage Cascade concept.
+- 0:30 - 1:00 (Aayush): GIN Encoder, NeuroMatch Order Embeddings, & GPU pre-embedding.
+- 1:00 - 1:35 (Srijal): Primary Quantitative Benchmarks, Pareto Trade-off Plot ('tradeoff.png'), & The Verification Bottleneck.
+- 1:35 - 2:00 (Aayush): Query-Size Receptive Field Breakdown, GitHub repository walk, & Scientific Takeaways.
+================================================================================
