@@ -530,13 +530,38 @@ print(f"\nOne-time costs: DB fingerprints {t_db_fp:.1f} s, DB embeddings {emb_ti
 # %% [markdown]
 # ## 10. Accuracy vs. speed trade-off
 
-# %%
-fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
+fig, ax = plt.subplots(1, 2, figsize=(14, 5.2), dpi=200)
+plt.subplots_adjust(wspace=0.28, left=0.07, right=0.96, top=0.88, bottom=0.14)
+
+method_styles = {
+    "Pattern FP screen only": {"color": "#ea580c", "marker": "s", "size": 85, "text_offset": (15, 12), "label": "Pattern FP screen only"},
+    "GNN B: order embedding": {"color": "#2563eb", "marker": "p", "size": 95, "text_offset": (18, -12), "label": "GNN B: Order Embedding alone"},
+    "GNN A: GIN + MLP": {"color": "#9333ea", "marker": "^", "size": 95, "text_offset": (18, 8), "label": "GNN A: GIN + MLP"},
+    "Pattern FP screen + RDKit": {"color": "#16a34a", "marker": "o", "size": 105, "text_offset": (-150, 14), "label": "Pattern FP + RDKit (Baseline)"},
+    "Cascade: GNN B shortlist + RDKit": {"color": "#0284c7", "marker": "*", "size": 160, "text_offset": (-125, -42), "label": "Cascade: GNN B + RDKit"},
+    "RDKit exact, brute force": {"color": "#dc2626", "marker": "D", "size": 85, "text_offset": (14, -20), "label": "RDKit exact (Brute Force)"}
+}
+
 for _, row in res_all.iterrows():
-    ax[0].scatter(row.ms_per_query, row.f1, s=60)
-    ax[0].annotate(row.method, (row.ms_per_query, row.f1), fontsize=8, xytext=(5, 3), textcoords="offset points")
-ax[0].set(xscale="log", xlabel="time per query (ms, log scale)", ylabel="F1 vs exact RDKit",
-          title=f"Accuracy vs speed ({N} molecules)")
+    m = row["method"]
+    cfg = method_styles.get(m, {"color": "black", "marker": "o", "size": 60, "text_offset": (10, 10), "label": m})
+    x = row["ms_per_query"]
+    y = row["f1"]
+    ax[0].scatter(x, y, color=cfg["color"], marker=cfg["marker"], s=cfg["size"], edgecolor="black", linewidth=0.8, zorder=5)
+    dx, dy = cfg["text_offset"]
+    ax[0].annotate(f"{cfg['label']}\n({x:.1f} ms, F1={y:.2f})", xy=(x, y), xytext=(dx, dy), textcoords="offset points",
+                   fontsize=8, fontweight="bold" if "Cascade" in m or "Baseline" in cfg["label"] else "normal",
+                   color="#0f172a", bbox=dict(boxstyle="round,pad=0.28", fc="white", ec=cfg["color"], lw=1.2, alpha=0.95),
+                   arrowprops=dict(arrowstyle="->", color=cfg["color"], lw=1.1, shrinkA=3, shrinkB=4), zorder=6)
+
+ax[0].set_xscale("log")
+ax[0].set_xlim(0.7, 85)
+ax[0].set_ylim(0.30, 1.10)
+ax[0].set_xlabel("Time per Query (ms, log scale)", fontsize=10.5, fontweight="bold", labelpad=6)
+ax[0].set_ylabel("F1 Score vs. Exact Ground Truth", fontsize=10.5, fontweight="bold", labelpad=6)
+ax[0].set_title(f"(a) Retrieval Accuracy vs. Latency Pareto Frontier ({N} Molecules)", fontsize=11, fontweight="bold", pad=10)
+ax[0].grid(True, which="both", ls="--", lw=0.5, alpha=0.45)
+ax[0].tick_params(labelsize=9)
 
 # Precision-recall curve of the order-embedding model over thresholds (sampled queries)
 sub = [r for r in rows if r["kind"] == "sampled"][:100]
@@ -550,9 +575,21 @@ for i, r in enumerate(sub):
 for t in np.quantile(S, np.linspace(0.5, 0.9999, 60)):
     pred = S >= t; tp = (pred & Y).sum()
     P.append(tp / max(pred.sum(), 1)); R.append(tp / max(Y.sum(), 1))
-ax[1].plot(R, P, marker=".")
-ax[1].set(xlabel="recall", ylabel="precision", title="Order-embedding GNN: threshold sweep")
-plt.tight_layout(); plt.savefig("results/tradeoff.png", dpi=150); plt.show()
+
+ax[1].plot(R, P, marker="o", markersize=3.5, color="#1e40af", lw=1.8, label="Order Embedding PR Curve")
+ax[1].fill_between(R, P, alpha=0.12, color="#3b82f6")
+ax[1].axvline(0.98, color="#dc2626", ls=":", lw=1.2, alpha=0.8)
+ax[1].set_xlim(0.56, 1.02)
+ax[1].set_ylim(0.16, 0.285)
+ax[1].set_xlabel("Recall (True Positives / All Subgraph Matches)", fontsize=10.5, fontweight="bold", labelpad=6)
+ax[1].set_ylabel("Precision (True Positives / Shortlisted)", fontsize=10.5, fontweight="bold", labelpad=6)
+ax[1].set_title("(b) GNN B Order Embeddings: Threshold Sensitivity", fontsize=11, fontweight="bold", pad=10)
+ax[1].grid(True, ls="--", lw=0.5, alpha=0.45)
+ax[1].tick_params(labelsize=9)
+ax[1].legend(loc="upper right", fontsize=8.5, framealpha=0.9)
+plt.savefig("results/tradeoff.png", dpi=300, bbox_inches="tight")
+plt.show()
+
 
 # %% [markdown]
 # ## 11. Where does the GNN fail? (error analysis by query size)
