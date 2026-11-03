@@ -37,6 +37,14 @@ In this open project, we investigate whether learned deep learning models can im
 2. **Hypothesis 2:** Can a geometric order-embedding formulation ($z_Q \le z_T$) allow one-time offline database pre-embedding, enabling faster approximate retrieval than bitwise fingerprint screening?
 3. **Hypothesis 3:** In a practical two-stage cascaded system (GNN Filter $\to$ Exact Verification), does the neural filter achieve a superior accuracy-speed Pareto frontier compared to industrial fingerprint cascades?
 
+> [!NOTE]
+> ### 🧸 Intuitive Problem Formulation: The Lego Analogy & Airport Security Checkpoint
+> To understand molecular substructure search intuitively, consider a toy box of **50,000 complex Lego models** (drug molecules like Aspirin, Paracetamol, Caffeine). A chemist hands us a **small Lego piece** of 6 connected blocks (a query fragment $Q$, like a Pyridine ring) and asks: *"Which of our 50,000 models contain this exact piece embedded inside them?"*
+> - **Exact Matching (RDKit brute force):** Manually checks every atom and bond under a microscope. 100% accurate, but combinatorially explosive on massive libraries (31.8 ms/query).
+> - **Classical Baseline (Pattern Fingerprints):** Generates a 2048-bit checklist (barcode) for each molecule. If the query requires a feature missing in the target, the target is rejected in 1 ms with guaranteed zero false negatives.
+> - **Learned GNN Order Embedding:** AI projects graphs into a non-negative cone $\mathbb{R}_{\ge 0}^{64}$ where containment corresponds to vector dominance ($z_Q \le z_T$), enabling instantaneous GPU matrix screening (2.8 ms).
+> - **Two-Stage Cascade (Airport Security Model):** Guard 1 (GNN) acts as a walk-through metal detector, shortlisting candidates at $\ge 98\%$ recall; Guard 2 (RDKit) performs a thorough pat-down only on suspects to guarantee 100% precision with zero false positives.
+
 ---
 
 ## 2. Background & Related Work

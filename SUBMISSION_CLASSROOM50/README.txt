@@ -29,6 +29,31 @@ Signed:
 - Srijal Gupta (25m0387)
 
 ================================================================================
+WHAT IS THIS PROJECT ABOUT? (EXPLAINED IN 60 SECONDS LIKE A 10TH GRADER)
+================================================================================
+The Lego Toy Analogy:
+Imagine you have 50,000 big Lego models (drug molecules like Aspirin, Paracetamol).
+Someone hands you a small Lego piece (a query fragment, e.g. a Pyridine ring) and 
+asks: "Which of our 50,000 toys contain this exact piece embedded inside them?"
+
+In chemistry, this is called Substructure Search. It is NP-complete (checking atom
+by atom takes exponential time). We compared 4 ways to solve this:
+
+1. RDKit Exact Search (Brute Force):
+   Checks atom-by-atom under a microscope. 100% correct, but slow on big databases.
+2. Pattern Fingerprints (The 2048-Bit Barcode):
+   Fast checklist. If the query piece has a feature missing in the big molecule, 
+   drop it immediately in 1.0 ms! (Classical industrial standard).
+3. Graph Neural Network (AI Order Embedding):
+   Turns molecules into numbers (z in R+^64). If query is inside molecule, then 
+   z_query <= z_molecule. Instant GPU vector check in 2.8 ms!
+4. Two-Stage Cascade (The Airport Security Combo):
+   Guard 1 (GNN) does a fast metal detector scan to shortlist candidates, and 
+   Guard 2 (RDKit) double-checks only the suspects to guarantee 100% accuracy.
+
+For the full simple walkthrough, see: 'PROJECT_EXPLAINED_SUPER_SIMPLE.md'
+
+================================================================================
 2. LINKS TO CHATGPT / EQUIVALENT LLMs & PROMPT ARCHIVE
 ================================================================================
 In accordance with course guidelines, we openly disclose all AI assistant / LLM 

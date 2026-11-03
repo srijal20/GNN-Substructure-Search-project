@@ -15,6 +15,20 @@
 
 ---
 
+## 🧸 What is this Project About? (Explained in 60 Seconds Like a 10th Grader)
+
+> **The Lego Toy Analogy:** Imagine you have **50,000 big Lego toys** (real drug molecules like Aspirin, Caffeine, Paracetamol). Someone gives you a **small Lego piece** (a query fragment, e.g., a Pyridine ring) and asks: *"Which of our 50,000 toys contain this exact piece inside them?"*
+
+In chemistry, this is called **Molecular Substructure Search**. It is **NP-complete** (checking atom-by-atom takes exponential time). We compared 4 ways to solve this:
+1. **RDKit Exact Search (Brute Force):** Checks every atom one-by-one. 100% correct, but very slow on big databases (31.8 ms).
+2. **Pattern Fingerprints (The 2048-Bit Barcode):** Fast checklist. If the query piece has a feature that the molecule doesn't have, drop it immediately in 1.0 ms! (Classical industrial standard).
+3. **Graph Neural Network (AI Order Embedding):** Turns molecules into numbers ($z \in \mathbb{R}_{\ge 0}^{64}$). If query is inside molecule, then $z_{\text{query}} \le z_{\text{molecule}}$. Fast vector check in 2.8 ms on GPU!
+4. **Two-Stage Cascade (The Airport Security Combo):** GNN does a fast metal-detector scan to shortlist candidates, and RDKit double-checks only the suspects to guarantee 100% accuracy.
+
+👉 **Want the full super-simple story? Read our [🧸 Plain English Project Guide](PROJECT_EXPLAINED_SUPER_SIMPLE.md)!**
+
+---
+
 ## 📌 Executive Summary
 
 Exact chemical substructure search ($Q \subseteq T$) using combinatorial graph matching (e.g., Ullmann/VF2 in RDKit) scales exponentially in the worst case $\mathcal{O}(|V_T|^{|V_Q|})$ and becomes computationally prohibitive across large chemical libraries ($50{,}000+$ molecules). 
